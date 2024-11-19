@@ -54,4 +54,12 @@ public class ProductService {
 
         return ResponseEntity.ok(updatedFields.toString());
     }
+
+    public boolean deleteProductById(Integer id){
+        if (productRepository.existsById(id)) {
+            productRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
