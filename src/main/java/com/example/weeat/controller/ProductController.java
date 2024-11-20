@@ -1,6 +1,7 @@
 package com.example.weeat.controller;
 
 import com.example.weeat.entity.Product;
+import com.example.weeat.repository.ProductRepository;
 import com.example.weeat.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
 
     //Create
     @PostMapping("")
@@ -32,6 +35,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
         return productService.getProductById(id);
+    }
+
+    @GetMapping("/Top2")
+    public List<Product> findTop2ProductsInRange(){
+        return productRepository.findTop2ProductsInRange();
     }
 
     //Update
