@@ -3,6 +3,7 @@ package com.example.weeat.service;
 import com.example.weeat.auth.UserPrincipal;
 import com.example.weeat.entity.User;
 import com.example.weeat.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +26,9 @@ public class UserService {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public String verify(User user) {
         Authentication authentication =
@@ -40,5 +45,16 @@ public class UserService {
             throw new UsernameNotFoundException(username);
         }
         return new UserPrincipal(user);
+    }
+
+    @Transactional
+    public String signup(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+
+        return jwtService.generateToken(user.getUsername());
     }
 }
